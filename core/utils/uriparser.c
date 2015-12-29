@@ -130,7 +130,7 @@ uri_component(char *adr, URIACTION action){
   size_t len = 0;
   int r ;
   
-  if (adr == NULL || strlen(adr) == 0) return uri;
+  if (adr == NULL || strlen(adr) == 0) return buffer;
   uri = uri_create_str(adr,NULL);
 
   switch(action){
