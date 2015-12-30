@@ -90,14 +90,15 @@ join(char *baseuri, char *reluri){
 }
 
 void
-rstrip(char *string){
+cspider_rstrip(char *string){
   int l;
   if (!string) return;
   l = strlen(string) - 1;
   while (isspace(string[l]) && l >= 0) string[l--] = 0;
 }
 
-void lstrip(char *string){
+void
+cspider_lstrip(char *string){
   int i, l;
   if (!string) return;
   l = strlen(string);
@@ -106,7 +107,7 @@ void lstrip(char *string){
 
 
 void
-joinall(char *baseuri, char **uris, int size){
+cspider_joinall(char *baseuri, char **uris, int size){
   int i;
   char *parsed = NULL;
   
@@ -124,7 +125,7 @@ joinall(char *baseuri, char **uris, int size){
 }
 
 char *
-uri_component(char *adr, URIACTION action){
+cspider_uri_component(char *adr, URIACTION action){
   URI *uri = NULL;
   char *buffer = NULL;
   size_t len = 0;

@@ -9,17 +9,17 @@ typedef enum {
 } URIACTION;
 
 void
-joinall(char *, char **, int);
+cspider_joinall(char *, char **, int);
 
 char *
-join(char *, char*);
+cspider_join(char *, char*);
 
 char *
-uri_component(char *, URIACTION);
+cspider_uri_component(char *, URIACTION);
   
 void
-rstrip(char *);
+cspider_rstrip(char *);
 
 void
-lstrip(char *);
+cspider_lstrip(char *);
 
