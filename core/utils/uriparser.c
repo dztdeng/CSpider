@@ -43,7 +43,7 @@ get_uri(URI *uri) {
   len = uri_str(uri, NULL, 0);
   if(len == (size_t) -1) return NULL;
 
-  buffer = (char *) malloc(len);
+  buffer = malloc(len);
   if(!buffer) return NULL;
 
   len = uri_str(uri, buffer, len);
@@ -60,8 +60,9 @@ getcomponent(URI *uri, size_t (*fn)(URI *, char *, size_t), char **buffer, size_
   r = fn(uri,*buffer,*len);
   if(r == (size_t)-1) return -1;
   if(r > *len){
-    p = (char *) realloc(*buffer,r);
+    p = realloc(*buffer,r);
     if(p == NULL) return -1;
+
     *buffer = p;
     *len = r;
     r = fn(uri,*buffer,*len);
@@ -135,46 +136,31 @@ cspider_uri_component(char *adr, URIACTION action){
   uri = uri_create_str(adr,NULL);
 
   switch(action){
-  case URI_SCHEME:
-    if(getcomponent(uri,uri_scheme,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_AUTH:
-    if(getcomponent(uri,uri_auth,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_HOST:
-    if(getcomponent(uri,uri_host,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_PORT:
-    if(getcomponent(uri,uri_port,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_PATH:
-    if(getcomponent(uri,uri_path,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_QUERY:
-    if(getcomponent(uri,uri_query,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-    
-  case URI_FRAGMENT:
-    if(getcomponent(uri,uri_fragment,&buffer,&len) == 1){
-      uri_destroy(uri);
-      return buffer;
-    }
-  }
+      case URI_SCHEME:
+	r = getcomponent(uri,uri_scheme,&buffer,&len);
+	break;
+      case URI_AUTH:
+	r = getcomponent(uri,uri_auth,&buffer,&len);
+	break;
+      case URI_HOST:
+	r = getcomponent(uri,uri_host,&buffer,&len);
+	break;
+      case URI_PORT:
+	r = getcomponent(uri,uri_port,&buffer,&len);
+	break;
+      case URI_PATH:
+	r = getcomponent(uri,uri_path,&buffer,&len);
+	break;    
+      case URI_QUERY:
+	r = getcomponent(uri,uri_query,&buffer,&len);
+	break;
+      case URI_FRAGMENT:
+	r = getcomponent(uri,uri_fragment,&buffer,&len);
+	break;
+ }
+  
+  uri_destroy(uri);
+
+  return r == 1 ?
+    buffer : NULL;
 }
