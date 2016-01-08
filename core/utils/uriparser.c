@@ -129,7 +129,7 @@ cspider_joinall(char *baseuri, char **uris, int size){
   char *parsed = NULL;
   
   for (i = 0; i < size; i++){
-    lstrip(uris[i]); rstrip(uris[i]);
+    cspider_lstrip(uris[i]); cspider_rstrip(uris[i]);
     parsed = join(baseuri,uris[i]);
     if (parsed == NULL) {
       continue;
