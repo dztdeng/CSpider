@@ -6,7 +6,7 @@ void p(cspider_t *cspider, char *d, char *url, void *user_data) {
   int size = xpath(d, "//a/@href", get, 10);
 //  int size = regexAll("http:\\/\\/(.*?)\\.html", d, get, 3, REGEX_ALL);
 
-  joinall(url,get,size);
+  cspider_joinall(url,get,size);
   addUrls(cspider, get, size);
   saveStrings(cspider, (void**)get, size, LOCK);
   freeStrings(get, size);
