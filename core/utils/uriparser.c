@@ -28,17 +28,17 @@ parseuris(const char* basestr, const char *uristr){
 
     uri_destroy(base);
     uri_destroy(rel);
-    
+
     return uri;
   }
-  
+
   uri = uri_create_str(uristr, NULL);
   if(!uri)
     return NULL;
 
   return uri;
 }
-  
+
 static char *
 get_uri(URI *uri) {
   size_t len;
@@ -67,7 +67,7 @@ getcomponent(URI *uri, size_t (*fn)(URI *, char *, size_t), char **buffer, size_
   r = fn(uri,*buffer,*len);
   if(r == (size_t)-1)
     return -1;
-  
+
   if(r > *len){
     p = realloc(*buffer,r);
     if(p == NULL)
@@ -79,7 +79,7 @@ getcomponent(URI *uri, size_t (*fn)(URI *, char *, size_t), char **buffer, size_
     if(r == (size_t)-1)
       return -1;
   }
-  
+
   if(r == 0)
     return -1;
 
@@ -87,7 +87,7 @@ getcomponent(URI *uri, size_t (*fn)(URI *, char *, size_t), char **buffer, size_
 }
 
 char *
-join(char *baseuri, char *reluri){
+cspider_join(char *baseuri, char *reluri){
 
   URI *uri;
   char *res;
@@ -97,7 +97,7 @@ join(char *baseuri, char *reluri){
 
   if(!uri)
     return NULL;
-  
+
   res = get_uri(uri);
   uri_destroy(uri);
 
@@ -127,10 +127,10 @@ void
 cspider_joinall(char *baseuri, char **uris, int size){
   int i;
   char *parsed = NULL;
-  
+
   for (i = 0; i < size; i++){
-    lstrip(uris[i]); rstrip(uris[i]);
-    parsed = join(baseuri,uris[i]);
+    cspider_lstrip(uris[i]); cspider_rstrip(uris[i]);
+    parsed = cspider_join(baseuri,uris[i]);
     if (parsed == NULL) {
       continue;
     }
@@ -147,7 +147,7 @@ cspider_uri_component(char *adr, URIACTION action){
   char *buffer = NULL;
   size_t len = 0;
   int r ;
-  
+
   if (adr == NULL || strlen(adr) == 0)
     return buffer;
   uri = uri_create_str(adr,NULL);
@@ -167,7 +167,7 @@ cspider_uri_component(char *adr, URIACTION action){
 	break;
       case URI_PATH:
 	r = getcomponent(uri,uri_path,&buffer,&len);
-	break;    
+	break;
       case URI_QUERY:
 	r = getcomponent(uri,uri_query,&buffer,&len);
 	break;
@@ -175,7 +175,7 @@ cspider_uri_component(char *adr, URIACTION action){
 	r = getcomponent(uri,uri_fragment,&buffer,&len);
 	break;
  }
-  
+
   uri_destroy(uri);
 
   return r == 1 ?
