@@ -14,7 +14,7 @@
 size_t save_data(void *ptr, size_t size, size_t nmemb, void *ss) {
   cs_task_t *save = (cs_task_t*)ss;
   size_t count = save->data->count;
-  size_t all = (size * nmemb) + 1;
+  size_t all = size * nmemb;
   
   char* buf = (char*) malloc(all);
   if(buf == NULL) 
