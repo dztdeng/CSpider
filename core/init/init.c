@@ -171,8 +171,8 @@ int cs_run(cspider_t *cspider) {
     printf("warn : need to init data persistence function(use cs_setopt_save)\n");
     return 0;
   }
-  uv_idle_init(cspider->loop, cspider->idler);
-  uv_idle_start(cspider->idler, watcher);
+  uv_prepare_init(cspider->loop, cspider->idler);
+  uv_prepare_start(cspider->idler, watcher);
   
   return uv_run(cspider->loop, UV_RUN_DEFAULT);
 }
