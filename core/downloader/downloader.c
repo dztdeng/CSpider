@@ -94,7 +94,6 @@ void work_done(uv_work_t *req, int status) {
     finally, free the task.
    */
   uv_rwlock_wrlock(cspider->lock);
-  cspider->download_thread--;
   cs_task_queue *q = removeTask(cspider->task_queue_doing, req->data);
   PANIC(q);
   
