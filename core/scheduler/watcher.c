@@ -4,7 +4,7 @@
   watcher : watch the work queues, to find out if there is work to do
   @handle : the uv_idle_t
 **/
-void watcher(uv_idle_t *handle) {
+void watcher(uv_prepare_t *handle) {
   cspider_t *cspider = (cspider_t*)handle->data;
   uv_rwlock_wrlock(cspider->lock);
   if (!isTaskQueueEmpty(cspider->task_queue)) {
@@ -66,7 +66,7 @@ void watcher(uv_idle_t *handle) {
   } 
   else {
     uv_rwlock_wrunlock(cspider->lock);
-    uv_idle_stop(handle);
+    uv_prepare_stop(handle);
   }
   
 }
