@@ -16,7 +16,7 @@ cspider_join(char *, char*);
 
 char *
 cspider_uri_component(char *, URIACTION);
-  
+
 void
 cspider_rstrip(char *);
 
