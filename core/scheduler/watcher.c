@@ -5,7 +5,6 @@
   @handle : the uv_idle_t
 **/
 void watcher(uv_prepare_t *handle) {
-  printf("test !\n");
   cspider_t *cspider = (cspider_t*)handle->data;
   uv_rwlock_wrlock(cspider->lock);
   if (!isTaskQueueEmpty(cspider->task_queue)) {
