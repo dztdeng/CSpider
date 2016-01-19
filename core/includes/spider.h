@@ -8,9 +8,6 @@
 #include "cJSON.h"
 #include "uriparser.h"
 
-#define DOWNLOAD 1
-#define SAVE     0
-
 typedef struct site_struct {
   char *user_agent;//user agent
   char *proxy;// proxy address
@@ -33,12 +30,8 @@ struct cspider_struct {
   //
   void *process_user_data;
   void *save_user_data;
-  //Max thread number
-  int download_thread_max;
-  int pipeline_thread_max;
-  //current thread number
-  int download_thread;
-  int pipeline_thread;
+  //Thread pool's size
+  int threadpool_size;
   //lock
   uv_rwlock_t *lock;
   //data persistence lock
@@ -61,7 +54,7 @@ void cs_setopt_timeout(cspider_t *cspider, long timeout);
 void cs_setopt_logfile(cspider_t *cspider, FILE *log);
 void cs_setopt_process(cspider_t *cspider, void (*process)(cspider_t *, char *, char*, void*), void *user_data);
 void cs_setopt_save(cspider_t *cspider, void (*save)(void*, void*), void *user_data);
-void cs_setopt_threadnum(cspider_t *cspider, int flag, int number);
+void cs_setopt_threadnum(cspider_t *cspider, int number);
 int cs_run(cspider_t *cspider);
 
 #endif

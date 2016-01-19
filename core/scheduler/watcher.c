@@ -11,10 +11,7 @@ void watcher(uv_prepare_t *handle) {
     /*
       if there is task unhandled yet, start work thread
      */
-    if (cspider->download_thread <= cspider->download_thread_max) {
-      /*
-	when thread's number reach the max limit
-       */
+    
       cs_task_queue *rem = removeTask(cspider->task_queue, cspider->task_queue->next->task);
       PANIC(rem);
     
@@ -28,16 +25,13 @@ void watcher(uv_prepare_t *handle) {
       ptask->cspider = cspider;
       addTask(cspider->task_queue_doing, rem);
       uv_queue_work(cspider->loop, req, download, work_done);
-
-      //add thread's number
-      cspider->download_thread++;
-    }
+    
   }
   
   if (!isDataQueueEmpty(cspider->data_queue)) {
     //if there is data required to be processed,
     // start thread
-    if (cspider->pipeline_thread <= cspider->pipeline_thread_max) {
+    
       cs_rawText_queue *rem = removeData(cspider->data_queue, cspider->data_queue->next->data);
       PANIC(rem);
       	
@@ -53,8 +47,7 @@ void watcher(uv_prepare_t *handle) {
       
       addData(cspider->data_queue_doing, rem);
       uv_queue_work(cspider->loop, req, dataproc, datasave);
-      cspider->pipeline_thread++;
-    }
+    
   }
 
   if (!isTaskQueueEmpty(cspider->task_queue_doing) ||

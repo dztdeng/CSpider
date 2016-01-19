@@ -23,10 +23,7 @@ cspider_t *init_cspider() {
   spider->data_queue_doing = initDataQueue();
   PANIC(spider->data_queue_doing);
   
-  spider->download_thread_max = 5;
-  spider->pipeline_thread_max = 5;
-  spider->download_thread = 1;
-  spider->pipeline_thread = 1;
+  spider->threadpool_size = 4;
   spider->process = NULL;
   spider->save = NULL;
   spider->process_user_data = NULL;
@@ -149,15 +146,10 @@ void cs_setopt_save(cspider_t *cspider, void (*save)(void*, void*), void *user_d
   else if @flag equal SAVE
   @number whill be the max number of save thread
 **/
-void cs_setopt_threadnum(cspider_t *cspider, int flag, int number) {
+void cs_setopt_threadnum(cspider_t *cspider, int number) {
   PANIC(cspider);
-  assert(flag == DOWNLOAD || flag == SAVE);
   assert(number > 0);
-  if (flag == DOWNLOAD) {
-    cspider->download_thread_max = number;
-  } else {
-    cspider->pipeline_thread_max = number;
-  }
+  cspider->threadpool_size = number;
 }
 /**
    cs_run : start the cspider
@@ -171,6 +163,13 @@ int cs_run(cspider_t *cspider) {
     printf("warn : need to init data persistence function(use cs_setopt_save)\n");
     return 0;
   }
+  /*
+    set the threadpool's size by setenv()
+   */
+  char threadpool_size[4] = {0};
+  snprintf(threadpool_size, sizeof(threadpool_size), "%d", cspider->threadpool_size);
+  setenv("UV_THREADPOOL_SIZE", threadpool_size, 1);
+  
   uv_prepare_init(cspider->loop, cspider->idler);
   uv_prepare_start(cspider->idler, watcher);
   

@@ -36,7 +36,6 @@ void datasave(uv_work_t *req, int status) {
   logger(0, "%s save finish.\n", ((cs_rawText_t*)req->data)->url, cspider);
   
   uv_rwlock_wrlock(cspider->lock);
-  cspider->pipeline_thread--;
   cs_rawText_queue *q = removeData(cspider->data_queue_doing, req->data);
   PANIC(q);
   

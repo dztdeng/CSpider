@@ -31,8 +31,7 @@ int main() {
   cs_setopt_process(spider, p, NULL);
   cs_setopt_save(spider, s, stdout);
   //设置抓取线程数量，和数据持久化的线程数量
-  cs_setopt_threadnum(spider, DOWNLOAD, 2);
-  cs_setopt_threadnum(spider, SAVE, 2);
+  cs_setopt_threadnum(spider, 5);
   cs_setopt_logfile(spider, stdout);
 
   return cs_run(spider);
