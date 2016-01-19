@@ -63,8 +63,8 @@ gcc -o test test.c -lcspider -I /usr/include/libxml2
 * `void cs_setopt_save(cspider_t *, void (*save)(void*, void*), void*)`  
 	Passing data persistence function to second param, and alse user custom context pointer to third param. In this custom function, you can get pointer to prepared data in second param.
 	
-* `void cs_setopt_threadnum(cspider_t *cspider, int , int )`  
-	Setting the number of thread. The second param could be `DOWNLOAD` and `SAVE`, which indicates two kinds of thread. The third param could be the number of thread you want to set.
+* `void cs_setopt_threadnum(cspider_t *cspider, int )`  
+	Setting the size of threadpool. The second param could be the size of threadpool you want to set.
 	
 * `int cs_run(cspider_t *)`  
 	Start cspider. Using this at the end of your code.  
@@ -166,9 +166,8 @@ int main() {
   //
   cs_setopt_process(spider, p, NULL);
   cs_setopt_save(spider, s, stdout);
-  //set the thread's number
-  cs_setopt_threadnum(spider, DOWNLOAD, 2);
-  cs_setopt_threadnum(spider, SAVE, 2);
+  //set the threadpool's number
+  cs_setopt_threadnum(spider, 5);
   
   return cs_run(spider);
 }
