@@ -7,22 +7,18 @@
   call this function to process the string we get
 **/
 void dataproc(uv_work_t *req) {
-  cspider_t *cspider = ((cs_rawText_t*)req->data)->cspider;
-  cs_rawText_t *text = (cs_rawText_t*)req->data;
-  //Put all buffer's data into a string
-  char *get = (char*)malloc(sizeof(char) * text->length+1);
-  PANIC(get);
-  
-  int i;
-  int currentCount = 0;
-  for (i = 0; i < text->count; i++) {
-    strncpy(get+currentCount, text->data[i], text->each[i]);
-    currentCount += text->each[i];
-  }
-  *(get+currentCount) = '\0';
-  //get data
-  (cspider->process)(cspider, get, text->url, cspider->process_user_data);
-  free(get);
+  cspider_t *cspider = ((cs_page*)req->data)->cspider;
+  //cs_rawText_t *text = (cs_rawText_t*)req->data;
+  cs_page *page = (cs_page*)req->data;
+  /*
+    call custom process function
+   */
+  (cspider->process)(cspider, (char*)page->data, page->url, cspider->process_user_data);
+  /**
+     change status page (page_process) -> (sleep)
+   **/
+  set_status(cspider->page_queue, page, sleep);
+  clear_page_from_queue(cspider->page_queue, page);
 }
 
 /**
@@ -31,16 +27,9 @@ void dataproc(uv_work_t *req) {
 
  **/
 void datasave(uv_work_t *req, int status) {
-  cspider_t *cspider = ((cs_rawText_t*)req->data)->cspider;
+  cspider_t *cspider = ((cs_page*)req->data)->cspider;
   //log
-  logger(0, "%s save finish.\n", ((cs_rawText_t*)req->data)->url, cspider);
-  
-  uv_rwlock_wrlock(cspider->lock);
-  cs_rawText_queue *q = removeData(cspider->data_queue_doing, req->data);
-  PANIC(q);
-  
-  logger(q != NULL, "removeData error in %s.\n", "dataProcess.c", cspider);
-  freeData(q);
-  uv_rwlock_wrunlock(cspider->lock);
+  logger(0, "%s save finish.\n", ((cs_page*)req->data)->url, cspider);
+  free(req);
 }
 

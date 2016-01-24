@@ -60,9 +60,14 @@ void addUrl(cspider_t *cspider, char *url) {
     PANIC(reUrl);
     
     strncpy(reUrl, url, len);
-    uv_rwlock_wrlock(cspider->lock);
-    createTask(cspider->task_queue, reUrl);
-    uv_rwlock_wrunlock(cspider->lock);
+    //createTask(cspider->task_queue, reUrl);
+    cs_page *page = get_page(cspider->page_queue);
+    set_url(page, reUrl);
+    /**
+       change status (sleep) -> (url_add)
+     **/
+    set_status(cspider->page_queue, page, url_add);
+    page->cspider = cspider;
   }
 }
 /**
@@ -87,12 +92,15 @@ void addUrls(cspider_t *cspider, char **urls, int size) {
       reUrls[i] = NULL;
     }
   }
-  uv_rwlock_wrlock(cspider->lock);
   for (i = 0; i < size; i++) {
-    if (reUrls[i] != NULL)
-      createTask(cspider->task_queue, reUrls[i]);
+    if (reUrls[i] != NULL) {
+      cs_page *page = get_page(cspider->page_queue);
+      set_url(page, reUrls[i]);
+      set_status(cspider->page_queue, page, url_add);
+      page->cspider = cspider;
+    }
+      //createTask(cspider->task_queue, reUrls[i]);
   }
-  uv_rwlock_wrunlock(cspider->lock);
 }
 
 /**

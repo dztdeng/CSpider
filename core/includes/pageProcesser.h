@@ -4,80 +4,38 @@
 #include "CS.h"
 #include "spider.h"
 #include "downloader.h"
+#include "cs_page_queue.h"
 
 /*
 
 */
 #define LOCK 1
 #define NO_LOCK 0
-/*
-  raw data, such as html and json which we get.
-*/
-struct cs_rawText_struct {
-  char *data[BUFFER_MAX_NUMBER]; /* Array of buffer */
-  unsigned int each[BUFFER_MAX_NUMBER]; /* each buffer's size */
-  int count;/* buffer's number */
-  int length;/* the sum of all buffer's size */
-  char *url; /* the url where it is downloaded */
-  uv_work_t *worker;/* Point to the worker */
-  cspider_t *cspider;/* the Main cspider struct */
-};
 
-
-/*------------------------------------------------------------
-  Added since Dec. 25/2015, don't touch it until finished.  
-  To find more information in page_processer.c .
--------------------------block start-------------------------*/
 
 /*
-  page carrier
+  dataProcess.c
 */
-#define FileTypeErr 0
-#define FileTypeHTML 1
-#define FileTypeCSS 2
-#define FileTypeJSON 3
-
-struct cs_page_struct {
-  void *data;
-  unsigned int capacity;
-  unsigned int used;
-  char file_type;
-};
-
-/*
-  page carrier'a queue
-*/
-#define MaxPageQueueNum 32
-#define LogMaxPageQueueNum 5
-
-struct cs_page_queue_struct {
-  cs_page *pages;
-  unsigned int capacity;
-  unsigned int usage;
-};
-
-/*-------------------------block end-------------------------*/
-
-/*
- data queue
-*/
-struct cs_rawText_queue_struct {
-  cs_rawText_t *data;
-  struct cs_rawText_queue_struct *next; /* next node */
-  struct cs_rawText_queue_struct *prev; /* previous node */
-};
-
-/*data.c*/
-int isDataQueueEmpty(cs_rawText_queue *head);
-cs_rawText_queue *initDataQueue();
-cs_rawText_t *createData();
-void addData(cs_rawText_queue *head, cs_rawText_queue *queue);
-cs_rawText_queue *removeData(cs_rawText_queue *head, cs_rawText_t *data);
-void freeData(cs_rawText_queue *node);
-
-
 void dataproc(uv_work_t *req);
 void datasave(uv_work_t *req, int status);
+/**
+   cs_page.c
+*/
+void clear_page(cs_page *p);
+void destroy_page(cs_page *p);
+int new_page(cs_page *p, unsigned int capacity);
+int set_page(cs_page *p, char* context, unsigned int length);
+/*
+cs_page_queue.c
+*/
+cs_page_queue *new_page_queue();
+cs_page *get_page(cs_page_queue *page_queue);
+void set_status(cs_page_queue *queue, cs_page *page, STATUS status);
+cs_page *get_status_page(cs_page_queue *queue, STATUS status);
+unsigned int get_status_num(cs_page_queue *queue, STATUS status);
+void set_url(cs_page *page, char *url);
+void clear_page_from_queue(cs_page_queue *queue, cs_page *page);
+unsigned int is_queue_empty(cs_page_queue *queue);
 /*
   user interface
 */

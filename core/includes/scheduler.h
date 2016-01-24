@@ -5,6 +5,7 @@
 #include "downloader.h"
 #include "pageProcesser.h"
 #include "spider.h"
+#include "cs_page_queue.h"
 
 void watcher(uv_prepare_t *handle);
 

@@ -27,6 +27,7 @@
 the max number of the buffers
 */
 #define BUFFER_MAX_NUMBER 1024
+#define bool char
 
 #ifndef TRUE
     #define TRUE 1

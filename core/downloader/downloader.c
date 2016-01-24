@@ -12,22 +12,24 @@
   @ss : input pointer
 **/
 size_t save_data(void *ptr, size_t size, size_t nmemb, void *ss) {
-  cs_task_t *save = (cs_task_t*)ss;
-  size_t count = save->data->count;
+  //cs_task_t *save = (cs_task_t*)ss;
+  cs_page *page = (cs_page*)ss;
+  //size_t count = save->data->count;
   size_t all = size * nmemb;
   
   char* buf = (char*) malloc(all);
   if(buf == NULL) 
     return (size_t) -1;
-  save->data->data[count] = buf; // "char != 1" only appears in IBM machines.
+  //save->data->data[count] = buf; // "char != 1" only appears in IBM machines.
   
   if(ptr == NULL)
     return (size_t) -1;
-  strncpy(save->data->data[count], (char*)ptr, all);
+  //strncpy(save->data->data[count], (char*)ptr, all);
   
-  save->data->each[count] = all;
-  save->data->count = count + 1;
-  save->data->length += all;
+  set_page(page, ptr, all);
+  //save->data->each[count] = all;
+  //save->data->count = count + 1;
+  //save->data->length += all;
   
   return all;
 }
@@ -39,9 +41,10 @@ size_t save_data(void *ptr, size_t size, size_t nmemb, void *ss) {
 void download(uv_work_t *req) {
   CURL *curl;
   CURLcode res;
-  
-  cs_task_t *task = (cs_task_t*)req->data;
-  cspider_t *cspider = task->cspider;
+
+  cs_page *page = (cs_page*)req->data;
+  //cs_task_t *task = (cs_task_t*)req->data;
+  cspider_t *cspider = page->cspider;
   site_t *site = (site_t*)cspider->site;
   curl = curl_easy_init();
   PANIC(curl);
@@ -63,11 +66,11 @@ void download(uv_work_t *req) {
     /*support redirection*/
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
     
-    curl_easy_setopt(curl, CURLOPT_URL, task->url);
+    curl_easy_setopt(curl, CURLOPT_URL, page->url);
     /*
       put url to cs_rawText_t
      */
-    task->data->url = task->url;
+    //task->data->url = task->url;
     
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, req->data);
@@ -82,28 +85,16 @@ void download(uv_work_t *req) {
   @req : the worker
 **/
 void work_done(uv_work_t *req, int status) {
-  cspider_t *cspider = ((cs_task_t*)req->data)->cspider;
-  /*打印到日志
+  cspider_t *cspider = ((cs_page*)req->data)->cspider;
+  /*
     print log
    */
-  logger(0, "%s download finish.\n", ((cs_task_t*)req->data)->url, cspider);
-  /*
-    when finish download data, 
-    first, remove task from task_queue_doing 
-    second, add rawText to data_queue
-    finally, free the task.
-   */
-  uv_rwlock_wrlock(cspider->lock);
-  cs_task_queue *q = removeTask(cspider->task_queue_doing, req->data);
-  PANIC(q);
-  
-  cs_rawText_queue *queue = (cs_rawText_queue*)malloc(sizeof(cs_rawText_queue));
-  PANIC(queue);
-  
-  queue->data = q->task->data;
-  addData(cspider->data_queue, queue);
-  freeTask(q);
-  uv_rwlock_wrunlock(cspider->lock);
+  logger(0, "%s download finish.\n", ((cs_page*)req->data)->url, cspider);
+  /**
+     change status (url_download) -> (page_add)
+   **/
+  set_status(cspider->page_queue, (cs_page*)req->data, page_add);
+  free(req);
   return;
 }
 
