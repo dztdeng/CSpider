@@ -27,11 +27,13 @@ int main() {
   cs_setopt_url(spider, "http://www.youku.com/v_olist/c_96_s_0_d_0_g_0_a_0_r_0_u_0_pt_0_av_0_ag_0_sg_0_mt_0_lg_0_q_0_pr_0_h_0_p_1.html");
 
   cs_setopt_useragent(spider, agent);
-  //指向自定义的解析函数，和数据持久化函数
+  /* Points to self-defined parse function. */
   cs_setopt_process(spider, p, NULL);
+  /* Points to self-defined data persistence function. */
   cs_setopt_save(spider, s, stdout);
-  //设置抓取线程数量，和数据持久化的线程数量
+  /* Set the number of downloading threads. */
   cs_setopt_threadnum(spider, 5);
+  /* Set the number of data-saving threads. */
   cs_setopt_logfile(spider, stdout);
 
   return cs_run(spider);
