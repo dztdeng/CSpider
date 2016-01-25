@@ -4,11 +4,12 @@ typedef struct {
   char *getDesc[20];
   int size;
 } Movie;
-//开始入口的 url
+/* begin url */
 char *begin = "www.douban.com/tag/%E7%A7%91%E5%B9%BB/movie";
 void p(cspider_t *cspider, char *d, char *url, void *user_data) {
   Movie *movie = (Movie*)malloc(sizeof(Movie));
   char *urls[20];
+  /* xpath to get title, desc and url */
   int sizeTitle = xpath(d, "//div[@id='content']/div[@class='grid-16-8 clearfix']/div[@class='article']/div[@class='mod movie-list']/dl/dd/a", movie->getTitle, 20);
   int sizeDesc = xpath(d, "//div[@id='content']/div[@class='grid-16-8 clearfix']/div[@class='article']/div[@class='mod movie-list']/dl/dd/div[@class='desc']", movie->getDesc, 20);
   int sizeUrl = xpath(d, "//div[@id='content']/div[@class='grid-16-8 clearfix']/div[@class='article']/div[@class='paginator']/a/@href", urls, 20);
@@ -16,7 +17,7 @@ void p(cspider_t *cspider, char *d, char *url, void *user_data) {
   saveString(cspider, (void*)movie, LOCK);
   char *newUrl[sizeUrl];
   int i;
-  //拼接成新的 url
+  /*  */
   for (i = 0; i < sizeUrl; i++) {
     newUrl[i] = (char*)malloc(sizeof(char) * (strlen(begin) + strlen(urls[i]) + 1));
     strcat(newUrl[i], begin);
