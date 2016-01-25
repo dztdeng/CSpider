@@ -5,6 +5,7 @@
 #include "cs_page_queue.h"
 
 
+void cspider_download(uv_work_t *req);
+void cspider_download_done(uv_work_t *req, int status);
 
-//extern cs_rawText_queue *data_queue;
 #endif

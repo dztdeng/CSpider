@@ -7,6 +7,6 @@
 #include "spider.h"
 #include "cs_page_queue.h"
 
-void watcher(uv_prepare_t *handle);
+void cspider_watcher(uv_prepare_t *handle);
 
 #endif

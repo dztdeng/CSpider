@@ -6,9 +6,9 @@
 
   call this function to process the string we get
 **/
-void dataproc(uv_work_t *req) {
+void cspider_process(uv_work_t *req) {
   cspider_t *cspider = ((cs_page*)req->data)->cspider;
-  //cs_rawText_t *text = (cs_rawText_t*)req->data;
+  /* get the page from worker */
   cs_page *page = (cs_page*)req->data;
   /*
     call custom process function
@@ -26,9 +26,8 @@ void dataproc(uv_work_t *req) {
    @req : the worker
 
  **/
-void datasave(uv_work_t *req, int status) {
+void cspider_process_done(uv_work_t *req, int status) {
   cspider_t *cspider = ((cs_page*)req->data)->cspider;
-  //log
   logger(0, "%s save finish.\n", ((cs_page*)req->data)->url, cspider);
   free(req);
 }

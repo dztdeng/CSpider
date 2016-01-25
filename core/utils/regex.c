@@ -13,18 +13,16 @@
 int regexAll(const char *regex, char *str, char **res, int num, int flag) {
 
   pcre *re;
-  //错误信息
+  /*error msg*/
   const char *errptr;
-  //错误位置
+  /*error offset*/
   int erroffset;
   int ovector[30];
-  //匹配到的结果数量
+  /**/
   int rc;
-  //返回的字符数组的下标
+  
   int index;
-  /*
-    pcre_exec执行的偏移量
-   */
+  
   int exec_offset = 0;
 
   re = pcre_compile(regex, 0, &errptr, &erroffset, NULL);
@@ -40,7 +38,7 @@ int regexAll(const char *regex, char *str, char **res, int num, int flag) {
 
     if (rc > 0) {
       pcre_get_substring(str, ovector, rc, flag, &res[index++]);
-      //设置偏移量
+      /*set offset*/
       exec_offset = ovector[1];
     }
   } while( rc > 0 && index < num);
@@ -59,12 +57,12 @@ int regexAll(const char *regex, char *str, char **res, int num, int flag) {
 **/
 int match(char *regex, char *str) {
   pcre *re;
-  //错误信息
+  /*error msg*/
   const char *errptr;
-  //错误位置
+  /*error offset*/
   int erroffset;
   int ovector[30];
-  //匹配到的结果数量
+  
   int rc;
   
 
@@ -79,7 +77,7 @@ int match(char *regex, char *str) {
     rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 
     if (rc > 0) {
-      //成功
+      /*sucess*/
       return 1;
     } else {
       return 0;

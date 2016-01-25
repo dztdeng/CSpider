@@ -169,7 +169,7 @@ int cs_run(cspider_t *cspider) {
   setenv("UV_THREADPOOL_SIZE", threadpool_size, 1);
   
   uv_prepare_init(cspider->loop, cspider->idler);
-  uv_prepare_start(cspider->idler, watcher);
+  uv_prepare_start(cspider->idler, cspider_watcher);
   
   return uv_run(cspider->loop, UV_RUN_DEFAULT);
 }

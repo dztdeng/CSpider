@@ -16,26 +16,9 @@
 /*
   dataProcess.c
 */
-void dataproc(uv_work_t *req);
-void datasave(uv_work_t *req, int status);
-/**
-   cs_page.c
-*/
-void clear_page(cs_page *p);
-void destroy_page(cs_page *p);
-int new_page(cs_page *p, unsigned int capacity);
-int set_page(cs_page *p, char* context, unsigned int length);
-/*
-cs_page_queue.c
-*/
-cs_page_queue *new_page_queue();
-cs_page *get_page(cs_page_queue *page_queue);
-void set_status(cs_page_queue *queue, cs_page *page, STATUS status);
-cs_page *get_status_page(cs_page_queue *queue, STATUS status);
-unsigned int get_status_num(cs_page_queue *queue, STATUS status);
-void set_url(cs_page *page, char *url);
-void clear_page_from_queue(cs_page_queue *queue, cs_page *page);
-unsigned int is_queue_empty(cs_page_queue *queue);
+void cspider_process(uv_work_t *req);
+void cspider_process_done(uv_work_t *req, int status);
+
 /*
   user interface
 */
