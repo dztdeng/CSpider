@@ -34,9 +34,9 @@ void cspider_download_done(uv_work_t *req, int status) {
   /* print log */
   logger(0, "%s download finish.\n", ((cs_page*)req->data)->url, cspider);
   /**
-     change status (url_download) -> (page_add)
+     change status (PAGE_DOWNLOAD_RUNNING) -> (PAGE_PROCESS_WAIT)
    **/
-  set_status(cspider->page_queue, (cs_page*)req->data, page_add);
+  set_status(cspider->page_queue, (cs_page*)req->data, PAGE_PROCESS_WAIT);
   free(req);
   return;
 }

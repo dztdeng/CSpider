@@ -15,9 +15,9 @@ void cspider_process(uv_work_t *req) {
    */
   (cspider->process)(cspider, (char*)page->data, page->url, cspider->process_user_data);
   /**
-     change status page (page_process) -> (sleep)
+     change status page (PAGE_PROCESS_RUNNING) -> (PAGE_SLEEP)
    **/
-  set_status(cspider->page_queue, page, sleep);
+  set_status(cspider->page_queue, page, PAGE_SLEEP);
   clear_page_from_queue(cspider->page_queue, page);
 }
 

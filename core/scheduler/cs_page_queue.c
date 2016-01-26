@@ -15,10 +15,11 @@ cs_page_queue *new_page_queue() {
   memset(page_queue->pages, 0, sizeof(cs_page) * DEFAULT_QUEUE_SIZE);
   page_queue->capacity = DEFAULT_QUEUE_SIZE;
   page_queue->used = 0;
-  page_queue->status_num[url_add] = 0;
-  page_queue->status_num[url_download] = 0;
-  page_queue->status_num[page_add] = 0;
-  page_queue->status_num[page_process] = 0;
+  page_queue->status_num[PAGE_SLEEP] = DEFAULT_QUEUE_SIZE;
+  page_queue->status_num[PAGE_DOWNLOAD_WAIT] = 0;
+  page_queue->status_num[PAGE_DOWNLOAD_RUNNING] = 0;
+  page_queue->status_num[PAGE_PROCESS_WAIT] = 0;
+  page_queue->status_num[PAGE_PROCESS_RUNNING] = 0;
   /**
      init locks
    **/
@@ -58,7 +59,7 @@ cs_page *get_page(cs_page_queue *page_queue) {
   while (i < page_queue->capacity) {
     //lock status
     uv_rwlock_rdlock(page_queue->status_lock);
-    if (page_queue->pages[i].status == sleep) {
+    if (page_queue->pages[i].status == PAGE_SLEEP) {
       /* unlock status */
       uv_rwlock_rdunlock(page_queue->status_lock);
       

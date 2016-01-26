@@ -58,7 +58,7 @@ void cs_setopt_url(cspider_t *cspider, char *url){
     /**
        change status (sleep) -> (url_add)
      **/
-    set_status(cspider->page_queue, page, url_add);
+    set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
   }
 }
 

@@ -63,9 +63,9 @@ void addUrl(cspider_t *cspider, char *url) {
     cs_page *page = get_page(cspider->page_queue);
     set_url(page, reUrl);
     /**
-       change status (sleep) -> (url_add)
+       change status (PAGE_SLEEP) -> (PAGE_DOWNLOAD_WAIT)
      **/
-    set_status(cspider->page_queue, page, url_add);
+    set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
     page->cspider = cspider;
   }
 }
@@ -94,7 +94,7 @@ void addUrls(cspider_t *cspider, char **urls, int size) {
     if (reUrls[i] != NULL) {
       cs_page *page = get_page(cspider->page_queue);
       set_url(page, reUrls[i]);
-      set_status(cspider->page_queue, page, url_add);
+      set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
       page->cspider = cspider;
     }
   }

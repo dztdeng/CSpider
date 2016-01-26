@@ -5,18 +5,18 @@
 /**
 page's five status
 ==================
-@sleep : this page isn't used now.
-@url_add : this page's task url is assigned now.
-@url_download : this page's goal html is downloading.
-@page_add : this page's goal html is waited to process.
-@page_process : this page's goal html is processing now.
+@PAGE_SLEEP : this page isn't used now.
+@PAGE_DOWNLOAD_WAIT : this page's task url is assigned now.
+@PAGE_DOWNLOAD_RUNNING : this page's goal html is downloading.
+@PAGE_PROCESS_WAIT : this page's goal html is waited to process.
+@PAGE_PROCESS_RUNNING : this page's goal html is processing now.
 **/
 typedef enum PAGE_STATUS {
-  sleep = 0,
-  url_add = 1,
-  url_download = 2,
-  page_add = 3,
-  page_process = 4
+  PAGE_SLEEP = 0,
+  PAGE_DOWNLOAD_WAIT = 1,
+  PAGE_DOWNLOAD_RUNNING = 2,
+  PAGE_PROCESS_WAIT = 3,
+  PAGE_PROCESS_RUNNING = 4
 } STATUS;
 
 #define DEFAULT_QUEUE_SIZE 512
