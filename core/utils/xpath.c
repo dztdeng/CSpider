@@ -105,30 +105,15 @@ int print_xpath_nodes(xmlNodeSetPtr nodes, char **get, int num) {
     int size;
     int i;
     
-    //assert(output);
     size = (nodes) ? nodes->nodeNr : 0;
     
-    //fprintf(output, "Result (%d nodes):\n", size);
     for(i = 0; i < size && i < num; ++i) {
         get[i] = (char*)malloc(sizeof(char));
 	assert(nodes->nodeTab[i]);
 	cur = (xmlNodePtr)nodes->nodeTab[i];
-	//printf("key : %s \n value : %s\n", cur->name, xmlNodeGetContent(cur));
+	
 	get[i] = (char*)xmlNodeGetContent(cur);
     }
 
     return (size<num)?size:num;
 }
-
-/*
-int main() {
-   char *xml = "<doc href=\"jb\"><ni>one</ni><ni>two</ni></doc>";
-   char *path = "/doc/ni";
-   char *get[10];
-   int i;
-   int size = xpath(xml, path, get);
-   for (i = 0; i < size; i++)
-     printf("%s\n", get[i]);
-   return 0;
- }
-*/

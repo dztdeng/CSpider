@@ -14,6 +14,7 @@
 void saveString(cspider_t *cspider, void *data, int flag) {
   assert(flag == LOCK || flag == NO_LOCK);
   if (flag == LOCK) {
+    /* thread safe */
     uv_rwlock_wrlock(cspider->save_lock);
     (cspider->save)(data, cspider->save_user_data);
     uv_rwlock_wrunlock(cspider->save_lock);
@@ -33,14 +34,14 @@ void saveStrings(cspider_t *cspider, void **datas, int size, int flag) {
   int i;
   assert(flag == LOCK || flag == NO_LOCK);
   if (flag == LOCK) {
-    //need to lock
+    /*thread safe*/
     uv_rwlock_wrlock(cspider->save_lock);
     for (i = 0; i < size; i++) {
       (cspider->save)(datas[i], cspider->save_user_data);
     }
     uv_rwlock_wrunlock(cspider->save_lock);
   } else {
-    // no need to lock
+    
     for (i = 0; i < size; i++) {
       (cspider->save)(datas[i], cspider->save_user_data);
     }
@@ -53,16 +54,19 @@ void saveStrings(cspider_t *cspider, void **datas, int size, int flag) {
 **/
 void addUrl(cspider_t *cspider, char *url) {
   if (!bloom_check(cspider->bloom, url)) {
-    //no exits
+    /*this url not exits*/
     bloom_add(cspider->bloom, url);
     unsigned int len = strlen(url) + 1;
     char *reUrl = (char*)malloc(sizeof(char) * len);
     PANIC(reUrl);
-    
     strncpy(reUrl, url, len);
-    uv_rwlock_wrlock(cspider->lock);
-    createTask(cspider->task_queue, reUrl);
-    uv_rwlock_wrunlock(cspider->lock);
+    cs_page *page = get_page(cspider->page_queue);
+    set_url(page, reUrl);
+    /**
+       change status (PAGE_SLEEP) -> (PAGE_DOWNLOAD_WAIT)
+     **/
+    set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
+    page->cspider = cspider;
   }
 }
 /**
@@ -76,23 +80,24 @@ void addUrls(cspider_t *cspider, char **urls, int size) {
   char *reUrls[size];
   for (i = 0; i < size; i++) {
     if (!bloom_check(cspider->bloom, urls[i])) {
-      // no exits
+      /*url not exits*/
       bloom_add(cspider->bloom, urls[i]);
       unsigned int len = strlen(urls[i]);
       reUrls[i] = (char*)malloc(sizeof(char) * (len + 1));
       PANIC(reUrls[i]);
-      
       strncpy(reUrls[i], urls[i], len+1);
     } else {
       reUrls[i] = NULL;
     }
   }
-  uv_rwlock_wrlock(cspider->lock);
   for (i = 0; i < size; i++) {
-    if (reUrls[i] != NULL)
-      createTask(cspider->task_queue, reUrls[i]);
+    if (reUrls[i] != NULL) {
+      cs_page *page = get_page(cspider->page_queue);
+      set_url(page, reUrls[i]);
+      set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
+      page->cspider = cspider;
+    }
   }
-  uv_rwlock_wrunlock(cspider->lock);
 }
 
 /**

@@ -27,6 +27,7 @@
 the max number of the buffers
 */
 #define BUFFER_MAX_NUMBER 1024
+#define bool char
 
 #ifndef TRUE
     #define TRUE 1
@@ -35,15 +36,8 @@ the max number of the buffers
 
 typedef struct cspider_struct cspider_t;
 
-typedef struct cs_task_queue_struct cs_task_queue;
-typedef struct cs_rawText_queue_struct cs_rawText_queue;
-typedef struct cs_rawText_struct cs_rawText_t;
 typedef struct cs_page_struct cs_page;
 typedef struct cs_page_queue_struct cs_page_queue;
-
-size_t save_data(void *ptr, size_t size, size_t nmemb, void *save);
-void download(uv_work_t *req);
-void work_done(uv_work_t *req, int status);
 
 
 #endif

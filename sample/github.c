@@ -75,7 +75,7 @@ int main() {
 	cs_setopt_save(spider, save, stdout);
 
 	// Number of downloader threads
-	cs_setopt_threadnum(spider, 10);
+	cs_setopt_threadnum(spider, 7);
 
 	return cs_run(spider);
 

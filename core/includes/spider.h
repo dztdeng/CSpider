@@ -17,13 +17,9 @@ typedef struct site_struct {
 
 struct cspider_struct {
   uv_loop_t *loop;
-  uv_idle_t *idler;
-  //task queue
-  cs_task_queue *task_queue_doing;
-  cs_task_queue *task_queue;
-  //data queue
-  cs_rawText_queue *data_queue;
-  cs_rawText_queue *data_queue_doing;
+  uv_prepare_t *idler;
+  
+  cs_page_queue *page_queue;
   // custom function
   void (*process)(struct cspider_struct *cspider, char *d, char *url, void *user_data);
   void (*save)(void *data, void *user_data);
@@ -32,8 +28,6 @@ struct cspider_struct {
   void *save_user_data;
   //Thread pool's size
   int threadpool_size;
-  //lock
-  uv_rwlock_t *lock;
   //data persistence lock
   uv_rwlock_t *save_lock;
   //include useragent, cookie, timeout, proxy

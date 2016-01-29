@@ -1,4 +1,5 @@
-#include "cs_page.h"
+#include "pageProcesser.h"
+#include "cs_page_queue.h"
 
 
 
@@ -13,7 +14,8 @@ void clear_page(cs_page *p) {
     return;
   memset(p->data, 0, p->capacity);
   p->used = 0;
-  p->file_type = FileTypeErr;
+  if (p->url != NULL)
+    free(p->url);
 }
 
 /*
@@ -25,7 +27,12 @@ void destroy_page(cs_page *p) {
     return;
   if(p->data != NULL)
     free(p->data);
-  memset(p, 0, sizeof(cs_page));
+  //memset(p, 0, sizeof(cs_page));
+  //free(p);
+  p->capacity = 0;
+  p->used = 0;
+  if (p->url != NULL)
+    free(p->url);
 }
 
 /*
@@ -44,7 +51,7 @@ int new_page(cs_page *p, unsigned int capacity) {
   p->capacity = capacity;
   memset(p->data, 0, p->capacity);
   /* set p->file_type and p->used to zeros */
-  p->file_type = 0;
+  //p->file_type = 0;
   p->used = 0;
 }
 
@@ -59,7 +66,6 @@ int set_page(cs_page *p, char* context, unsigned int length) {
     return 0x10; /* 2 */
   if(length == 0)
     return 0x100; /* 3 */
-  
   if(p->data == NULL) {
     unsigned int capacity = \
       (length / 512 + (unsigned int)((length % 512) != 0) + 2) * 512; /* floor to 512 bytes */
@@ -69,7 +75,7 @@ int set_page(cs_page *p, char* context, unsigned int length) {
     p->capacity = capacity;
     p->data = buf;
     p->used = 0;
-    p->file_type = FileTypeErr;
+    //p->file_type = FileTypeErr
   }
   else if(p->capacity - p->used < length) {
     unsigned int capacity = p->capacity + \
@@ -82,9 +88,9 @@ int set_page(cs_page *p, char* context, unsigned int length) {
     p->capacity = capacity;
     p->data = buf;
   }
-  
   memcpy(p->data + p->used, context, length);
   p->used += length;
-  
+  /* compatible for string by end with '\0' */
+  *((char*)p->data + p->used) = '\0';
   return 0;
 }

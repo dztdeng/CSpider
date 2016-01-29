@@ -2,6 +2,7 @@
 #include "downloader.h"
 #include "utils.h"
 #include "scheduler.h"
+#include "cs_page_queue.h"
 
 /**
   init_cspider : init the cspider
@@ -12,17 +13,7 @@
 cspider_t *init_cspider() {
   cspider_t *spider = (cspider_t *)malloc(sizeof(cspider_t));
   PANIC(spider);
-  //init task queue
-  spider->task_queue = initTaskQueue();
-  PANIC(spider->task_queue);
-  spider->task_queue_doing = initTaskQueue();
-  PANIC(spider->task_queue_doing);
-  //init data queue
-  spider->data_queue = initDataQueue();
-  PANIC(spider->data_queue);
-  spider->data_queue_doing = initDataQueue();
-  PANIC(spider->data_queue_doing);
-  
+  spider->page_queue = new_page_queue();
   spider->threadpool_size = 4;
   spider->process = NULL;
   spider->save = NULL;
@@ -30,9 +21,7 @@ cspider_t *init_cspider() {
   spider->save_user_data = NULL;
   spider->loop = uv_default_loop();
   
-  spider->idler = (uv_idle_t*)malloc(sizeof(uv_idle_t));
-  spider->lock = (uv_rwlock_t*)malloc(sizeof(uv_rwlock_t));
-  uv_rwlock_init(spider->lock);
+  spider->idler = (uv_prepare_t*)malloc(sizeof(uv_prepare_t));
   spider->save_lock = (uv_rwlock_t*)malloc(sizeof(uv_rwlock_t));
   uv_rwlock_init(spider->save_lock);
   spider->idler->data = spider;
@@ -60,7 +49,16 @@ void cs_setopt_url(cspider_t *cspider, char *url){
     char *reUrl = (char*)malloc(sizeof(char) * (len+1));
     PANIC(reUrl);
     strncpy(reUrl, url, len+1);
-    createTask(cspider->task_queue, reUrl);
+    /**
+       get a new page, and set it's status url_add
+     **/
+    cs_page *page = get_page(cspider->page_queue);
+    page->cspider = cspider;
+    set_url(page, reUrl);
+    /**
+       change status (sleep) -> (url_add)
+     **/
+    set_status(cspider->page_queue, page, PAGE_DOWNLOAD_WAIT);
   }
 }
 
@@ -171,7 +169,7 @@ int cs_run(cspider_t *cspider) {
   setenv("UV_THREADPOOL_SIZE", threadpool_size, 1);
   
   uv_prepare_init(cspider->loop, cspider->idler);
-  uv_prepare_start(cspider->idler, watcher);
+  uv_prepare_start(cspider->idler, cspider_watcher);
   
   return uv_run(cspider->loop, UV_RUN_DEFAULT);
 }
