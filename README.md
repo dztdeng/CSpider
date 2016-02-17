@@ -3,6 +3,10 @@
 A scalable and convenient crawler framework based on C:).  
 [中文文档.](https://github.com/luohaha/CSpider/wiki/中文文档)
 
+##Mailing list
+
+[A micro-community for C/C++ engineers, non-native English speaker friendly, open for everyone.](https://groups.google.com/forum/#!forum/xonce)
+
 ##Examples
 Welcome any program using cspider to add links here.
 
