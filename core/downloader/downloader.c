@@ -15,7 +15,7 @@ static size_t save_data(void *ptr, size_t size, size_t nmemb, void *ss) {
   cs_page *page = (cs_page*)ss;
   /* get the total size*/
   size_t all = size * nmemb;
-  
+
   if(ptr == NULL)
     return (size_t) -1;
   /* save data in page */
@@ -50,13 +50,13 @@ void cspider_download(uv_work_t *req) {
   CURLcode res;
 
   cs_page *page = (cs_page*)req->data;
-  
+
   cspider_t *cspider = page->cspider;
   site_t *site = (site_t*)cspider->site;
   /* init curl */
   curl = curl_easy_init();
   PANIC(curl);
-  
+
   if (curl) {
     if (site->user_agent != NULL) {
       curl_easy_setopt(curl, CURLOPT_USERAGENT, site->user_agent);
@@ -72,14 +72,14 @@ void cspider_download(uv_work_t *req) {
     }
     /*support redirection*/
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1);
-    
+
     curl_easy_setopt(curl, CURLOPT_URL, page->url);
-    
+
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, save_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, req->data);
     /* start the curl */
     res = curl_easy_perform(curl);
-    
+
     curl_easy_cleanup(curl);
   }
 }

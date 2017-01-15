@@ -6,7 +6,7 @@
 **/
 void cspider_watcher(uv_prepare_t *handle) {
   cspider_t *cspider = (cspider_t*)handle->data;
-  
+
   if (get_status_num(cspider->page_queue, PAGE_DOWNLOAD_WAIT) != 0) {
     /*
       if there is task unhandled yet, start work thread
@@ -22,9 +22,9 @@ void cspider_watcher(uv_prepare_t *handle) {
     set_status(cspider->page_queue, (cs_page*)req->data, PAGE_DOWNLOAD_RUNNING);
     /* begin thread */
     uv_queue_work(cspider->loop, req, cspider_download, cspider_download_done);
-    
+
   }
-  
+
   if (get_status_num(cspider->page_queue, PAGE_PROCESS_WAIT) != 0) {
     /* if there is data required to be processed */
     /* get new thread worker */
@@ -38,13 +38,13 @@ void cspider_watcher(uv_prepare_t *handle) {
     set_status(cspider->page_queue, (cs_page*)req->data, PAGE_PROCESS_RUNNING);
     /* begin thread */
     uv_queue_work(cspider->loop, req, cspider_process, cspider_process_done);
-    
+
   }
-  
+
   if (is_queue_empty(cspider->page_queue) == 0) {
     /* if page queue is empty,
      then stop cspider*/
     uv_prepare_stop(handle);
   }
-  
+
 }

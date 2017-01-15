@@ -6,7 +6,7 @@
   @str : input string
   @res : array of string what we get
   @num : size of @res
-  @flag : 
+  @flag :
 
   return the number of string what we get
 **/
@@ -20,9 +20,9 @@ int regexAll(const char *regex, char *str, char **res, int num, int flag) {
   int ovector[30];
   /**/
   int rc;
-  
+
   int index;
-  
+
   int exec_offset = 0;
 
   re = pcre_compile(regex, 0, &errptr, &erroffset, NULL);
@@ -62,9 +62,9 @@ int match(char *regex, char *str) {
   /*error offset*/
   int erroffset;
   int ovector[30];
-  
+
   int rc;
-  
+
 
   re = pcre_compile(regex, 0, &errptr, &erroffset, NULL);
 
@@ -73,7 +73,7 @@ int match(char *regex, char *str) {
     return -1;
   }
 
-  
+
     rc = pcre_exec(re, NULL, str, strlen(str), 0, 0, ovector, 30);
 
     if (rc > 0) {

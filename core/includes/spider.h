@@ -18,7 +18,7 @@ typedef struct site_struct {
 struct cspider_struct {
   uv_loop_t *loop;
   uv_prepare_t *idler;
-  
+
   cs_page_queue *page_queue;
   // custom function
   void (*process)(struct cspider_struct *cspider, char *d, char *url, void *user_data);

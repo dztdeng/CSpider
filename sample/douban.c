@@ -50,7 +50,7 @@ void s(void *str, void *user_data) {
   }
 }
 int main() {
-  cspider_t *spider = init_cspider(); 
+  cspider_t *spider = init_cspider();
   char *agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.10; rv:42.0) Gecko/20100101 Firefox/42.0";
   cs_setopt_url(spider, begin);
   cs_setopt_useragent(spider, agent);

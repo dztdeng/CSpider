@@ -20,7 +20,7 @@ cspider_t *init_cspider() {
   spider->process_user_data = NULL;
   spider->save_user_data = NULL;
   spider->loop = uv_default_loop();
-  
+
   spider->idler = (uv_prepare_t*)malloc(sizeof(uv_prepare_t));
   spider->save_lock = (uv_rwlock_t*)malloc(sizeof(uv_rwlock_t));
   uv_rwlock_init(spider->save_lock);
@@ -167,9 +167,9 @@ int cs_run(cspider_t *cspider) {
   char threadpool_size[4] = {0};
   snprintf(threadpool_size, sizeof(threadpool_size), "%d", cspider->threadpool_size);
   setenv("UV_THREADPOOL_SIZE", threadpool_size, 1);
-  
+
   uv_prepare_init(cspider->loop, cspider->idler);
   uv_prepare_start(cspider->idler, cspider_watcher);
-  
+
   return uv_run(cspider->loop, UV_RUN_DEFAULT);
 }

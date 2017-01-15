@@ -34,7 +34,7 @@ cs_page_queue *new_page_queue() {
 /**
    find a page to use;
   @page_queue : the page queue which we want to get page from
- 
+
   notice : used++, after get a new cs_page
 
   @notice : thread safe
@@ -43,7 +43,7 @@ cs_page *get_page(cs_page_queue *page_queue) {
   /* lock capacity*/
   uv_rwlock_wrlock(page_queue->capacity_lock);
   if (page_queue->used >= page_queue->capacity) {
-    /* the capacity isn't enough now 
+    /* the capacity isn't enough now
      expand it's size to double than before*/
     cs_page *new_pages = (cs_page*) malloc(sizeof(cs_page) * page_queue->capacity * 2);
     /* copy tp new place*/
@@ -62,14 +62,14 @@ cs_page *get_page(cs_page_queue *page_queue) {
     if (page_queue->pages[i].status == PAGE_SLEEP) {
       /* unlock status */
       uv_rwlock_rdunlock(page_queue->status_lock);
-      
+
       //lock used
       uv_rwlock_wrlock(page_queue->used_lock);
       page_queue->used++;
       /* unlock used*/
       uv_rwlock_wrunlock(page_queue->used_lock);
-      
-      
+
+
       return page_queue->pages + i;
     }
     //unlock status

@@ -9,23 +9,23 @@
 
  * return the number of string we get
  **/
-int xpath(char *xml, char *path, char **get, int num) { 
+int xpath(char *xml, char *path, char **get, int num) {
 
   int size;
-    /* Init libxml */     
+    /* Init libxml */
     xmlInitParser();
     //LIBXML_TEST_VERSION
 
     /* Do the main job */
     size = execute_xpath_expression(xml, BAD_CAST path, get, num);
       if(size == -1) {
-	
+
 	return -1;
       }
 
     /* Shutdown libxml */
     xmlCleanupParser();
-    
+
     /*
      * this is to debug memory for regression tests
      */
@@ -38,7 +38,7 @@ int xpath(char *xml, char *path, char **get, int num) {
  * execute_xpath_expression:
  * @filename:		the input XML filename.
  * @xpathExpr:		the xpath expression for evaluation.
- * @nsList:		the optional list of known namespaces in 
+ * @nsList:		the optional list of known namespaces in
  *			"<prefix1>=<href1> <prefix2>=href2> ..." format.
  *
  * Parses input XML file, evaluates XPath expression and prints results.
@@ -47,37 +47,37 @@ int xpath(char *xml, char *path, char **get, int num) {
  */
 int execute_xpath_expression(const char* filename, const xmlChar* xpathExpr, char **get, int num) {
     xmlDocPtr doc;
-    xmlXPathContextPtr xpathCtx; 
-    xmlXPathObjectPtr xpathObj; 
-    
+    xmlXPathContextPtr xpathCtx;
+    xmlXPathObjectPtr xpathObj;
+
     assert(filename);
     assert(xpathExpr);
 
     /* Load XML document */
     //doc = xmlParseFile(filename);
-    
+
     doc = htmlReadMemory(filename, strlen(filename), NULL, NULL,  HTML_PARSE_NOERROR | HTML_PARSE_NOWARNING);
     //doc = htmlDocPtr(filename, NULL);
     if (doc == NULL) {
 	fprintf(stderr, "Error: unable to parse this string\n");
 	return(-1);
     }
-    
+
     /* Create xpath evaluation context */
     xpathCtx = xmlXPathNewContext(doc);
     if(xpathCtx == NULL) {
         fprintf(stderr,"Error: unable to create new XPath context\n");
-        xmlFreeDoc(doc); 
+        xmlFreeDoc(doc);
         return -1;
     }
-    
+
 
     /* Evaluate xpath expression */
     xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
     if(xpathObj == NULL) {
         fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", xpathExpr);
-        xmlXPathFreeContext(xpathCtx); 
-        xmlFreeDoc(doc); 
+        xmlXPathFreeContext(xpathCtx);
+        xmlFreeDoc(doc);
         return -1;
     }
 
@@ -86,9 +86,9 @@ int execute_xpath_expression(const char* filename, const xmlChar* xpathExpr, cha
 
     /* Cleanup */
     xmlXPathFreeObject(xpathObj);
-    xmlXPathFreeContext(xpathCtx); 
-    xmlFreeDoc(doc); 
-    
+    xmlXPathFreeContext(xpathCtx);
+    xmlFreeDoc(doc);
+
     return size;
 }
 
@@ -104,14 +104,14 @@ int print_xpath_nodes(xmlNodeSetPtr nodes, char **get, int num) {
     xmlNodePtr cur;
     int size;
     int i;
-    
+
     size = (nodes) ? nodes->nodeNr : 0;
-    
+
     for(i = 0; i < size && i < num; ++i) {
         get[i] = (char*)malloc(sizeof(char));
 	assert(nodes->nodeTab[i]);
 	cur = (xmlNodePtr)nodes->nodeTab[i];
-	
+
 	get[i] = (char*)xmlNodeGetContent(cur);
     }
 

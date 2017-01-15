@@ -41,7 +41,7 @@ void saveStrings(cspider_t *cspider, void **datas, int size, int flag) {
     }
     uv_rwlock_wrunlock(cspider->save_lock);
   } else {
-    
+
     for (i = 0; i < size; i++) {
       (cspider->save)(datas[i], cspider->save_user_data);
     }

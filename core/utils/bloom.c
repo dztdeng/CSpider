@@ -18,7 +18,7 @@ Bloom_t *create_bloom(size_t size, size_t nfuncs, ...) {
     free(bloom);
     return NULL;
   }
-  
+
   if (!(bloom->funcs=(hashfunc_t*)malloc(nfuncs*sizeof(hashfunc_t)))) {
     free(bloom->a);
     free(bloom);
@@ -83,7 +83,7 @@ int bloom_check(Bloom_t *bloom, char *s)
 }
 
 /**
-  init Bloom_t 
+  init Bloom_t
 **/
 Bloom_t *init_Bloom() {
   return create_bloom(2500000, 2, sax_hash, sdbm_hash);
